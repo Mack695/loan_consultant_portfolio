@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe9f0"/><stop offset="1" stop-color="#b9cbd8"/></linearGradient></defs>
+  <rect width="400" height="480" fill="url(#g)"/>
+  <circle cx="200" cy="180" r="70" fill="#7f97a9"/>
+  <path d="M60 480c0-110 60-170 140-170s140 60 140 170z" fill="#0b2a4a"/>
+  <text x="200" y="440" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#fff" opacity=".8">Replace images/consultant.jpg</text>
+</svg>

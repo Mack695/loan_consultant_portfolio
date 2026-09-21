@@ -1,0 +1,220 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- ============ NAVBAR ============ -->
+<header class="nav" id="top">
+  <div class="container nav__inner">
+    <a href="#top" class="brand">
+      <span class="brand__name">{{ SITE.name|upper }}</span>
+      <span class="brand__sep"></span>
+      <span class="brand__title">{{ SITE.title }}</span>
+    </a>
+    <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav class="nav__links" id="navLinks">
+      <a href="#about">About</a>
+      <a href="#collateral">Collateral</a>
+      <a href="#process">How It Works</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#request" class="btn btn--outline-gold btn--sm">Request a Loan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="about">
+  <div class="hero__orb hero__orb--1"></div>
+  <div class="hero__orb hero__orb--2"></div>
+  <div class="container hero__grid">
+    <div class="hero__text reveal">
+      <h1>Need Cash? Borrow<br>Against What You <span class="gold">Already Own</span></h1>
+      <p class="hero__sub">Collateral-backed loans for individuals.<br>Send your request with photos, get a fair valuation and a clear offer.</p>
+      <div class="hero__cta">
+        <a href="#request" class="btn btn--primary">Request a Loan</a>
+        <a href="#collateral" class="btn btn--outline-gold">Accepted Collateral</a>
+      </div>
+      <ul class="hero__stats">
+        <li><strong data-count="5">0</strong><span>Collateral Types</span></li>
+        <li><strong data-count="3">0</strong><span>Simple Steps</span></li>
+        <li><strong data-count="24" data-suffix="h">0</strong><span>Response Goal</span></li>
+      </ul>
+    </div>
+    <div class="hero__photo reveal">
+      <div class="photo-blob">
+        <img src="{% static 'images/sethbi.jpeg' %}"
+             onerror="this.onerror=null;this.src='{% static 'images/sethbi.jpeg' %}'"
+             alt="{{ SITE.name }}, {{ SITE.title }}">
+      </div>
+      <div class="photo-accent"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST STRIP ============ -->
+<section class="partners" aria-label="Why borrow with us">
+  <div class="container partners__inner">
+    <ul class="partners__list">
+      <li>✔ Transparent Valuation</li>
+      <li>✔ Secure Collateral Storage</li>
+      <li>✔ No Hidden Fees</li>
+      <li>✔ Collateral Returned on Repayment</li>
+    </ul>
+    <span class="partners__license">{{ SITE.license }} · Licensed Lender</span>
+  </div>
+</section>
+
+<!-- ============ COLLATERAL ============ -->
+<section class="section" id="collateral">
+  <div class="container">
+    <div class="section__head reveal">
+      <h2>Collateral <span class="gold">We Accept</span></h2>
+      <p>Pick what you own and start your request. Estimate your repayments below.</p>
+    </div>
+
+    <div class="cards" id="serviceGrid">
+      {% for s in services %}
+      <article class="card">
+        <div class="card__icon">{{ s.icon }}</div>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.description }}</p>
+        {% if s.rate_from %}<span class="card__rate">{{ s.rate_from }}</span>{% endif %}
+        <a href="#request" class="card__link" data-select-collateral="{{ s.category }}">Request a loan →</a>
+      </article>
+      {% empty %}
+      <p class="empty">No collateral types yet. Run <code>python manage.py seed_data</code> or add some in the admin.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Calculator -->
+    <div class="calc reveal" id="calculator" data-currency="{{ SITE.currency }}">
+      <div class="calc__inputs">
+        <h3>Repayment Estimator</h3>
+        <label>Loan amount: <strong id="amtOut"></strong>
+          <input type="range" id="calcAmount" min="100" max="100000" step="100" value="5000">
+        </label>
+        <label>Interest per month: <strong id="rateOut"></strong>
+          <input type="range" id="calcRate" min="0.5" max="20" step="0.5" value="4">
+        </label>
+        <label>Term: <strong id="termOut"></strong>
+          <input type="range" id="calcTerm" min="1" max="24" step="1" value="6">
+        </label>
+      </div>
+      <div class="calc__result">
+        <span>Estimated monthly repayment</span>
+        <strong id="calcPayment"></strong>
+        <small>Total interest: <b id="calcInterest"></b></small>
+        <small class="muted">Illustration only. Your offer depends on your collateral's valuation.</small>
+        <a href="#request" class="btn btn--gold">Request this loan</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="section section--dark" id="process">
+  <div class="container">
+    <div class="section__head reveal">
+      <h2>How It <span class="gold">Works</span></h2>
+      <p>Click a step to see what happens.</p>
+    </div>
+    <div class="timeline reveal">
+      <div class="timeline__bar"><span id="timelineFill"></span></div>
+      <div class="timeline__steps">
+        <button class="step is-active" data-step="1"><span class="step__num">1</span><b>Submit Request</b></button>
+        <button class="step" data-step="2"><span class="step__num">2</span><b>Valuation &amp; Offer</b></button>
+        <button class="step" data-step="3"><span class="step__num">3</span><b>Get Your Cash</b></button>
+      </div>
+      <div class="timeline__panels">
+        <div class="panel is-active" data-panel="1"><h3>Tell us what you're pledging</h3><p>Fill in the short form with your email, WhatsApp number, collateral type and amount needed. Photos are optional but speed things up.</p></div>
+        <div class="panel" data-panel="2"><h3>We value it and send an offer</h3><p>We review your collateral and contact you on WhatsApp with the loan amount, repayment terms and any documents needed.</p></div>
+        <div class="panel" data-panel="3"><h3>Sign, receive funds, repay</h3><p>Once you accept, we finalise the agreement and release the funds. Your collateral is returned when the loan is fully repaid.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" id="testimonials">
+  <div class="container">
+    <div class="section__head reveal">
+      <h2>Client <span class="gold">Stories</span></h2>
+    </div>
+    <div class="slider reveal" id="slider">
+      <button class="slider__btn" data-dir="-1" aria-label="Previous">‹</button>
+      <div class="slider__viewport">
+        <div class="slider__track" id="sliderTrack">
+          {% for t in testimonials %}
+          <figure class="quote">
+            <div class="stars">{% for i in "12345" %}{% if forloop.counter <= t.rating %}★{% else %}☆{% endif %}{% endfor %}</div>
+            <blockquote>“{{ t.quote }}”</blockquote>
+            <figcaption><b>{{ t.client_name }}</b>{% if t.client_role %} · {{ t.client_role }}{% endif %}</figcaption>
+          </figure>
+          {% empty %}
+          <figure class="quote"><blockquote>Add testimonials in the admin panel.</blockquote></figure>
+          {% endfor %}
+        </div>
+      </div>
+      <button class="slider__btn" data-dir="1" aria-label="Next">›</button>
+    </div>
+    <div class="slider__dots" id="sliderDots"></div>
+  </div>
+</section>
+
+<!-- ============ LOAN REQUEST ============ -->
+<section class="section section--dark" id="request">
+  <div class="container contact">
+    <div class="contact__info reveal">
+      <h2>Request Your <span class="gold">Collateral Loan</span></h2>
+      <p>Tell us what you'd like to borrow against. We'll reply on WhatsApp.</p>
+      <ul>
+        <li>📋 Have your ID and proof of ownership ready</li>
+        <li>📸 Clear photos help us value faster</li>
+        <li>💬 <a href="https://wa.me/{{ SITE.whatsapp }}" target="_blank" rel="noopener">Chat on WhatsApp: {{ SITE.phone }}</a></li>
+        <li>📧 {{ SITE.email }}</li>
+        <li>📍 {{ SITE.address }}</li>
+      </ul>
+    </div>
+
+    <form class="form reveal" id="leadForm" method="post" action="{% url 'core:index' %}" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% if messages %}{% for m in messages %}<div class="alert alert--ok">{{ m }}</div>{% endfor %}{% endif %}
+      <div class="alert alert--ok" id="formSuccess" hidden></div>
+      <div class="form__grid">
+        {% for field in form %}
+        <div class="field {% if field.name == 'collateral_description' or field.name == 'images' %}field--full{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <em>(optional)</em>{% endif %}</label>
+          {{ field }}
+          {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+          {% if field.name == 'images' %}<div class="previews" id="imagePreviews"></div>{% endif %}
+          <small class="field__error" data-error-for="{{ field.name }}">{{ field.errors|join:" " }}</small>
+        </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn--gold btn--block" id="submitBtn">Submit Loan Request</button>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div><strong>{{ SITE.name }}</strong><br><span class="muted">{{ SITE.title }} · {{ SITE.license }}</span></div>
+      <div class="footer__links">
+        <a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Licensing</a>
+      </div>
+      <div class="footer__social">
+        <a href="https://wa.me/{{ SITE.whatsapp }}" aria-label="WhatsApp">wa</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">ig</a>
+      </div>
+    </div>
+    <p class="footer__legal">
+      {{ SITE.name }} provides collateral-based loans to individuals ({{ SITE.license }}). All loans are subject to collateral valuation, verification of ownership and approval.
+      Amounts, rates and terms vary by borrower and asset and are confirmed in writing before any agreement is signed. Failure to repay may result in loss of the pledged collateral.
+      Submitting a request is not a commitment to lend. Sample content is for demonstration only.
+    </p>
+  </div>
+</footer>
+
+{% endblock %}
